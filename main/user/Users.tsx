@@ -4,9 +4,11 @@ import NavigationBar from '../utils/useNavigationBar';
 
 const Home = () => {
   return (
+    <>
     <View style={styles.container}>
       <NavigationBar/>
     </View>
+    </>
   )
 }
 const styles = StyleSheet.create({

@@ -3,11 +3,14 @@ import { BottomNavigation, Text } from 'react-native-paper';
 import Dashboard from '../tabs/Dashboard';
 import Appointment from '../tabs/Appointment';
 import Profile from '../tabs/Profile';
+import RecordAppointment from '../tabs/RecordAppointment';
 import { StyleSheet, View } from 'react-native';
 
 const DashboardRoute = () => <Dashboard/>;
 
 const AppointmentRoute = () => <Appointment/>;
+
+//const RecordRoute = () => <RecordAppointment/>;
 
 const ProfileRoute = () => <Profile/>;
 
@@ -16,12 +19,14 @@ const useNavigationBar = () => {
   const [routes] = useState([
     { key: 'dashboard', title: 'Dashboard', focusedIcon: 'view-dashboard', unfocusedIcon: 'view-dashboard-outline'},
     { key: 'appointment', title: 'Appointment', focusedIcon: 'calendar' },
+    //{ key: 'Record', title: 'Record', focusedIcon: 'clipboard-text-multiple-outline' },
     { key: 'profile', title: 'Profile', focusedIcon: 'account-circle' },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     dashboard: DashboardRoute,
     appointment: AppointmentRoute,
+    //Record: RecordRoute,
     profile: ProfileRoute,
   });
   

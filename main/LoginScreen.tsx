@@ -20,7 +20,7 @@ const Login = () => {
     setMessage('');
 
     try {
-        const response = await axios.post('http://192.168.100.40/my_api/login.php', {
+        const response = await axios.post('http://192.168.2.104/my_api/login.php', {
             email,
             password,
         }, { timeout: 5000 });

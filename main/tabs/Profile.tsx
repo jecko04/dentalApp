@@ -23,7 +23,7 @@ const Profile = () => {
   const handleLogout = async () => {
     setLoading(true);
     try{
-      const logoutResponse = await axios.post('http://192.168.100.40/my_api/logout.php');
+      const logoutResponse = await axios.post('http://192.168.2.104/my_api/logout.php');
       if (logoutResponse.data.success) {
         Alert.alert("Logout", logoutResponse.data.message);
 
@@ -40,8 +40,8 @@ const Profile = () => {
   }
 
   const fetchData = async () => {
-    try {
-       const response = await axios.get('http://192.168.100.40/my_api/profile.php');
+    try { 
+       const response = await axios.get('http://192.168.2.104/my_api/profile.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }
@@ -95,10 +95,12 @@ const Profile = () => {
                 titleStyle={styles.textColor}
                 >
                 <List.Item title="Profile" 
+                key="id"
                 left={props => <List.Icon {...props} icon="account-circle-outline" 
                 />}
                 />
                 <List.Item title="Change Password" 
+                key="id1"
                 left={props => <List.Icon {...props} icon="account-lock-outline" />}
                 />
               </List.Accordion>
