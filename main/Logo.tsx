@@ -5,7 +5,7 @@ import { Button, TextInput } from 'react-native-paper';
 const Logo = () => {
   return (
     <View style={styles.container}>
-      <Image source={require('../images/image.png')} style={styles.image} />
+      <Image source={require('../main/images/image.png')} style={styles.image} />
         <Text style={styles.logo}>
         <Text style={styles.logo1}>SMTC </Text>
         <Text style={styles.logo2}>Dental </Text>

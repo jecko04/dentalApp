@@ -9,6 +9,7 @@ import { RootNavigator } from './main/navigation';
 export default function App() {
 
   const [isShowSplash, setIsShowSplash] = useState(true);
+  const [ref, setRef] = useState();
     
   useEffect(() => {
     const timer = setTimeout(() => {

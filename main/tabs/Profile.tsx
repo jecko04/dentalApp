@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, ToastAndroid, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Button, Text, Avatar, List, Divider } from 'react-native-paper'
 import axios from 'axios'
@@ -25,11 +25,12 @@ const Profile = () => {
     try{
       const logoutResponse = await axios.post('http://192.168.2.104/my_api/logout.php');
       if (logoutResponse.data.success) {
-        Alert.alert("Logout", logoutResponse.data.message);
 
         navigation.navigate('Onboarding', {
           screen: "Login",
-      });
+        });
+
+      
       }else {
         Alert.alert("Logout failed", logoutResponse.data.message);
       }
@@ -38,6 +39,17 @@ const Profile = () => {
       console.log(error);
     }
   }
+
+  const showToastWithGravityAndOffset = () => {
+    handleLogout();
+    ToastAndroid.showWithGravityAndOffset(
+      'Account Logout Successfully!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
 
   const fetchData = async () => {
     try { 
@@ -110,7 +122,7 @@ const Profile = () => {
 
             <Button icon="logout" mode="outlined" textColor='#ff4200' 
             className='rounded-md mt-5'
-            onPress={handleLogout}
+            onPress={() => showToastWithGravityAndOffset()}
             >
               Logout
             </Button>

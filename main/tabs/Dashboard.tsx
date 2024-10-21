@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, RefreshControl } from 'react-native'
+import { ScrollView, StyleSheet, Text, View, RefreshControl, Image } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Card, Avatar, IconButton, Modal, Portal, Divider, Button } from 'react-native-paper'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
@@ -77,22 +77,25 @@ const Dashboard = () => {
 
   return (
     <>
-    <View className=' bg-[#ff4200] rounded-b-lg max-h-28 h-full flex items-center'>
-      <Text className='text-lg text-white mt-12'>Dashboard</Text>
+    <View className=' bg-[#ff4200] rounded-b-lg max-h-36 h-full flex items-center'>
+      <Text className='text-lg text-white mt-16'>Dashboard</Text>
     </View>
 
-    <View>
-      
+    <View className='flex flex-row items-center gap-1 mt-3 px-2'>
+    <Image source={require('../images/image.png')} className='h-14 w-14'/>
+    <Text className='text-lg text-[#FF4200]'>STMC -</Text>
+    <Text className='text-lg text-[#2938DA]'>Dental</Text>
+    <Text className='text-lg text-[#FADC12]'>Care</Text>
     </View>
 
-    <View className='px-2 mt-3'>
-      <Text className='text-xl'>Welcome Back!</Text>
+    <View className='px-3 mt-3'>
+      <Text className='text-xl font-semibold'>Welcome Back!</Text>
       <Text className='text-xl text-[#ff4200]'> 
       {data.success && data.data?.name ? data.data.name : 'Loading...'}
       </Text>
     </View>
 
-    <Text className='text-[#FF4200] text-center text-xl mt-5 '>Today Appointment</Text>
+    <Text className='text-[#000000] flex justify-start px-2 text-xl mt-20 font-black'>Today's Appointment</Text>
     <ScrollView className=' py-4 px-2 max-h-64 h-full mt-3'
     refreshControl={ 
     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -125,11 +128,11 @@ const Dashboard = () => {
       
     </ScrollView>
 
-    <Divider bold style={{ 
+    {/* <Divider bold style={{ 
     marginTop: 28, 
     marginHorizontal: 11, 
     backgroundColor: '#ff4200'  
-  }} />
+  }} /> */}
     </>
 
   )

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, ToastAndroid } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Button, TextInput } from 'react-native-paper';
 import Logo from './Logo';
@@ -44,6 +44,18 @@ const Login = () => {
         setLoading(false);
     }
 }
+
+const showToastWithGravityAndOffset = () => {
+  handleLogin();
+  ToastAndroid.showWithGravityAndOffset(
+    'Account Login Successfully!',
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+  );
+};
+
   
   return (
     <>
@@ -84,7 +96,7 @@ const Login = () => {
 
         <Button 
           mode="contained"
-          onPress={handleLogin}
+          onPress={() => showToastWithGravityAndOffset()}
           textColor='#FFFFFF'
           className='rounded-md max-w-sm w-full bg-[#FF4200]'
           >
