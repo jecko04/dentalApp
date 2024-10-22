@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../main/LoginScreen';
 import Home from './user/Users';
 import RecordDetails from './tabs/RecordDetails';
+import ManageProfile from './tabs/ManageProfile';
 
   export type RootStackParamList = {
     Onboarding: NavigatorScreenParams<OnboardingStackParamList>;
@@ -14,6 +15,7 @@ import RecordDetails from './tabs/RecordDetails';
     Login: undefined;
     Home: undefined;
     RecordDetails: { appointment: any };
+    ManageProfile: undefined;
   }
   
   const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -29,6 +31,7 @@ import RecordDetails from './tabs/RecordDetails';
             <OnboardingStack.Screen name="Login" component={Login} />
             <OnboardingStack.Screen name="Home" component={Home} />
             <OnboardingStack.Screen name="RecordDetails" component={RecordDetails} />
+            <OnboardingStack.Screen name="ManageProfile" component={ManageProfile} />
         </OnboardingStack.Navigator>
     );
   };

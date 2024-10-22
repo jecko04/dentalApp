@@ -6,6 +6,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Alert } from 'react-native';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Profile = () => {
@@ -22,34 +23,32 @@ const Profile = () => {
 
   const handleLogout = async () => {
     setLoading(true);
-    try{
-      const logoutResponse = await axios.post('http://192.168.100.40/my_api/logout.php');
-      if (logoutResponse.data.success) {
+    try {
+      const response = await axios.post('http://192.168.100.40/my_api/logout.php'); // Adjust the URL as needed
+      if (response.data.success) {
 
-        navigation.navigate('Onboarding', {
-          screen: "Login",
-        });
+          await AsyncStorage.removeItem('Doctors_ID');
+          await AsyncStorage.removeItem('remember_me');
 
-      
-      }else {
-        Alert.alert("Logout failed", logoutResponse.data.message);
+          navigation.navigate('Onboarding', {
+            screen: 'Login'}
+          ); 
+
+          ToastAndroid.showWithGravityAndOffset(
+            'Account Logout Successfully!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
+      } else {
+          Alert.alert("Logout Failed", response.data.message);
       }
-    }
-    catch (error) {
-      console.log(error);
-    }
+  } catch (error) {
+      console.error("Logout error:", error);
+      Alert.alert("Error", "An error occurred. Please try again.");
   }
-
-  const showToastWithGravityAndOffset = () => {
-    handleLogout();
-    ToastAndroid.showWithGravityAndOffset(
-      'Account Logout Successfully!',
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
-  };
+  }
 
   const fetchData = async () => {
     try { 
@@ -81,6 +80,12 @@ const Profile = () => {
 
   const handlePress = () => setExpanded(!expanded);
 
+  const handleProfile = () => {
+    navigation.navigate("Onboarding", {
+      screen: 'ManageProfile',
+    })
+  }
+
   return (
     <>
 
@@ -108,6 +113,7 @@ const Profile = () => {
                 >
                 <List.Item title="Profile" 
                 key="id"
+                onPress={handleProfile}
                 left={props => <List.Icon {...props} icon="account-circle-outline" 
                 />}
                 />
@@ -122,7 +128,7 @@ const Profile = () => {
 
             <Button icon="logout" mode="outlined" textColor='#ff4200' 
             className='rounded-md mt-5'
-            onPress={() => showToastWithGravityAndOffset()}
+            onPress={() => handleLogout()}
             >
               Logout
             </Button>

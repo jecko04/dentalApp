@@ -4,7 +4,7 @@ import { Button, TextInput } from 'react-native-paper';
 import Logo from './Logo';
 import axios from 'axios';
 import { useAppNavigation } from './utils/useAppNaviagtion';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors, Checkbox  } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
@@ -13,21 +13,24 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const navigation = useAppNavigation();
 
-  const handleLogin = async () => {
+  const handleLogin = async (storedEmail: any, storedPassword: any) => {
     setLoading(true);
     setMessage('');
 
     try {
         const response = await axios.post('http://192.168.100.40/my_api/login.php', {
-            email,
-            password,
+          email: storedEmail || email,
+          password: storedPassword || password,
+            remember_me: rememberMe,
         }, { timeout: 5000 });
 
         console.log("API Response:", response.data); 
+        console.log("is Click:" , rememberMe);
 
         setMessage(response.data.message);
         if (response.data.success) { // Check for success
@@ -35,10 +38,24 @@ const Login = () => {
 
           if(rememberMe) {
             await AsyncStorage.setItem('remember_me', String(rememberMe));
+            await AsyncStorage.setItem('email', email);
+            await AsyncStorage.setItem('password', password);
+          }else {
+            await AsyncStorage.removeItem('remember_me');
+            await AsyncStorage.removeItem('Email');
+            await AsyncStorage.removeItem('Password');
           }
-              navigation.navigate('Onboarding', {
-                  screen: "Home",
-              });
+          navigation.navigate('Onboarding', {
+              screen: "Home",
+          });
+
+          ToastAndroid.showWithGravityAndOffset(
+            'Account Login Successfully!',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
         } else {
             Alert.alert("Login failed", response.data.message);
         }
@@ -53,30 +70,20 @@ const Login = () => {
 
 useEffect(() => {
   const checkRememberMe = async () => {
-      const rememberMeValue = await AsyncStorage.getItem('remember_me');
-      if (rememberMeValue === 'true') {
-          const storedDoctorsId = await AsyncStorage.getItem('Doctors_ID');
-          if (storedDoctorsId) {
-              navigation.navigate('Onboarding', {
-                  screen: 'Home',
-              });
-          }
+    const rememberMeValue = await AsyncStorage.getItem('remember_me');
+    if (rememberMeValue === 'true') {
+      const storedDoctorsId = await AsyncStorage.getItem('Doctors_ID');
+      const storedEmail = await AsyncStorage.getItem('email'); 
+      const storedPassword = await AsyncStorage.getItem('password');
+      if (storedDoctorsId) {
+        if (storedDoctorsId) {
+          handleLogin(storedEmail, storedPassword); 
       }
+      }
+    }
   };
   checkRememberMe();
 }, []);
-
-
-const showToastWithGravityAndOffset = () => {
-  handleLogin();
-  ToastAndroid.showWithGravityAndOffset(
-    'Account Login Successfully!',
-    ToastAndroid.LONG,
-    ToastAndroid.BOTTOM,
-    25,
-    50,
-  );
-};
 
   
   return (
@@ -86,10 +93,11 @@ const showToastWithGravityAndOffset = () => {
         <ActivityIndicator animating={true} color={MD2Colors.red800} size={'large'} />
       ) : (
         <>
-        <View style={styles.container}>
+        <View className='flex flex-col justify-center items-center px-3 mt-36'>
         <Logo/>
 
-        <Text style={styles.title}>Login</Text>
+        <View className='flex flex-col w-full'>
+        <Text className='text-lg mt-6'>Login</Text>
         
         <TextInput
           mode="outlined"
@@ -98,6 +106,7 @@ const showToastWithGravityAndOffset = () => {
           onChangeText={setEmail}
           style={styles.inputs}
           placeholder="Email"
+          left={<TextInput.Icon icon="email" />}
         />
         
         <TextInput
@@ -114,16 +123,31 @@ const showToastWithGravityAndOffset = () => {
               onPress={() => setShowPassword(!showPassword)} 
             />
           }
+          left={<TextInput.Icon icon="account-lock" />}
+
         />
 
+        <View className='flex flex-row gap-1 items-center'>
+          <Checkbox
+                status={rememberMe ? 'checked' : 'unchecked'}
+                onPress={() => {
+                  setRememberMe(!rememberMe);
+                }}
+              />
+              <Text>Remember Me</Text>
+        </View>
+        </View>
+        
+        
         <Button 
           mode="contained"
-          onPress={() => showToastWithGravityAndOffset()}
+          onPress={() => handleLogin(email, password)}
           textColor='#FFFFFF'
           className='rounded-md max-w-sm w-full bg-[#FF4200]'
           >
           Login
         </Button>
+
       </View>
       </>
       )}
@@ -134,17 +158,6 @@ const showToastWithGravityAndOffset = () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    marginVertical: 20,
-  },
   inputs: {
     width: '100%',
     marginBottom: 16, 

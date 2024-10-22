@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, RefreshControl } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { SegmentedButtons, DataTable, IconButton, Divider  } from 'react-native-paper';
-import axios from 'axios';
+import { StyleSheet, Text, View } from 'react-native'
+import React, { } from 'react'
+import { IconButton, Divider  } from 'react-native-paper';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
+import Logo from '../Logo';
 
 const RecordDetails = ({ route }: { route: any }) => {
   const {appointment} = route.params; 
@@ -18,14 +18,50 @@ const RecordDetails = ({ route }: { route: any }) => {
           <Text className='text-lg text-white'>Dental Appointment Details</Text>
         </View>
         {appointment ? (
-          <View className='flex gap-3 mt-4'>
-          <Text className='text-lg'>Name: {appointment.name}</Text>
+          <View className='px-6 pt-10 flex flex-col gap-3'>
+            <Logo/>
+          <Text className='text-lg pt-10'>Name: {appointment.name}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Service: {appointment.services}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Branch: {appointment.branch}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Appointment Date: {appointment.appointment_date}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Appointment Time: {appointment.appointment_time}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Reschedule Date: {appointment.reschedule_date}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg'>Reschedule Time: {appointment.reschedule_time}</Text>
+          <Divider bold style={{ 
+            marginTop: 28, 
+            marginHorizontal: 11, 
+            backgroundColor: '#ff4200'  
+          }} />
           <Text className='text-lg text-center text-green-600'>Status: {appointment.status}</Text>
         </View>
         ) : (
@@ -42,4 +78,7 @@ const RecordDetails = ({ route }: { route: any }) => {
 export default RecordDetails
 
 const styles = StyleSheet.create({
+  container: {
+    shadowColor: "#3e3e3e",
+  }
 })

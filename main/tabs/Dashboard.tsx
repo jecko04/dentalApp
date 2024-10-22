@@ -167,11 +167,7 @@ const Dashboard = () => {
       
     </ScrollView>
 
-    {/* <Divider bold style={{ 
-    marginTop: 28, 
-    marginHorizontal: 11, 
-    backgroundColor: '#ff4200'  
-  }} /> */}
+    
     </>
 
   )
