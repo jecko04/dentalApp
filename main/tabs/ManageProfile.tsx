@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ToastAndroid } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { IconButton, Divider, Avatar, Button, TextInput, Modal, PaperProvider, Portal} from 'react-native-paper';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
 import axios from 'axios';
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ManageProfile = () => {
 
@@ -11,7 +12,7 @@ const ManageProfile = () => {
     const [visible, setVisible] = useState(false);
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
-    const [image, setImage] = useState();
+    const [image, setImage] = useState<string | null>(null);
     const containerStyle = {backgroundColor: 'white',
         padding: 20,
     };
@@ -39,6 +40,17 @@ const ManageProfile = () => {
 
     useEffect(() => {
         fetchData();
+        const loadImage = async () => {
+            try {
+            const savedImage: any = await AsyncStorage.getItem('avatarImage');
+                if (savedImage) {
+                    setImage(savedImage);
+                }
+            } catch (error) {
+                console.log("Error loading image: ", error);
+            }
+        }
+        loadImage();
     }, []);
 
     const uploadImage = async () => {
@@ -61,9 +73,46 @@ const ManageProfile = () => {
         }
     }
 
+    const uploadImageFromFiles = async () => {
+        try {
+            await ImagePicker.requestMediaLibraryPermissionsAsync(); 
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const imageUri = result.assets[0].uri;
+                saveImage(imageUri);
+            }
+        } catch (error) {
+            console.log("Error uploading images: ", error);
+        }
+    };
+
+    const clearImage = async () => {
+        try {
+            setImage(null);
+            await AsyncStorage.removeItem('avatarImage'); 
+        } catch (error) {
+            console.log("Error clearing image: ", error);
+        }
+    };
+
     const saveImage = async (image: any) => {
         try {
             setImage(image);
+            await AsyncStorage.setItem('avatarImage', image);
+
+            ToastAndroid.showWithGravityAndOffset(
+                'Change Profile Picture Successfully!',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+              );
             setVisible(false);
         }
         catch (error) {
@@ -133,24 +182,29 @@ const ManageProfile = () => {
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.container}>
             <Text className='text-lg text-center pt-3 font-black'>Profile Picture</Text>
             <View className='flex flex-row gap-3 items-center justify-around p-7'>
-                <View className='bg-gray-200 rounded-md flex flex-col items-center'>
+                <TouchableOpacity className=' flex flex-col items-center'>                    
                     <IconButton icon="camera" size={30} iconColor='#FADC12' 
-                    className='-top-2'
+                    className='-top-2 bg-gray-400 rounded-md'
+                    onPress={uploadImage}
                     />
-                    <Text className='text-xs text-black absolute bottom-2'>camera</Text>
-                </View>
-                <View className='bg-gray-200 rounded-md flex flex-col items-center'>
+                    <Text className='text-xs text-black absolute bottom-0 font-semibold' onPress={uploadImage}>camera</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity className=' flex flex-col items-center'>                    
                     <IconButton icon="image" size={30} iconColor='#2938DA' 
-                    className='-top-2'
+                    className='-top-2 bg-gray-400 rounded-md'
+                    onPress={uploadImageFromFiles}
                     />
-                    <Text className='text-xs text-black absolute bottom-2'>camera</Text>
-                </View>
-                <View className='bg-gray-200 rounded-md flex flex-col items-center'>
-                    <IconButton icon="trash-can" size={30} iconColor='#FF4200' 
-                    className='-top-2'
+                    <Text className='text-xs text-black absolute bottom-0 font-semibold' onPress={uploadImageFromFiles}>upload file</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity className=' flex flex-col items-center'>                    
+                    <IconButton icon="trash-can" size={30} iconColor='#ff4200' 
+                    className='-top-2 bg-gray-400 rounded-md'
+                    onPress={clearImage}
                     />
-                    <Text className='text-xs text-black absolute bottom-2'>camera</Text>
-                </View>
+                    <Text className='text-xs text-black absolute bottom-0 font-semibold' onPress={clearImage}>remove</Text>
+                </TouchableOpacity>
             </View>
         </Modal>
       </Portal>
