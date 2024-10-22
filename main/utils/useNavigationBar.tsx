@@ -3,7 +3,7 @@ import { BottomNavigation, Text } from 'react-native-paper';
 import Dashboard from '../tabs/Dashboard';
 import Appointment from '../tabs/Appointment';
 import Profile from '../tabs/Profile';
-import RecordAppointment from '../tabs/RecordAppointment';
+import RecordAppointment from '../tabs/RecordDetails';
 import { StyleSheet, View } from 'react-native';
 
 const DashboardRoute = () => <Dashboard/>;

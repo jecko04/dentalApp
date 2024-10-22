@@ -2,10 +2,9 @@
 import * as React from 'react';
 import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from '../main/LoginScreen'; // Update this path
+import Login from '../main/LoginScreen';
 import Home from './user/Users';
-
-
+import RecordDetails from './tabs/RecordDetails';
 
   export type RootStackParamList = {
     Onboarding: NavigatorScreenParams<OnboardingStackParamList>;
@@ -14,6 +13,7 @@ import Home from './user/Users';
   export type OnboardingStackParamList = {
     Login: undefined;
     Home: undefined;
+    RecordDetails: { appointment: any };
   }
   
   const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -28,12 +28,15 @@ import Home from './user/Users';
         >
             <OnboardingStack.Screen name="Login" component={Login} />
             <OnboardingStack.Screen name="Home" component={Home} />
+            <OnboardingStack.Screen name="RecordDetails" component={RecordDetails} />
         </OnboardingStack.Navigator>
     );
   };
 
   export const RootNavigator = () => {
+
     return (
+      
         <RootStack.Navigator
             screenOptions={{ 
                 headerShown: false,

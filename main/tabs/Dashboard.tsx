@@ -3,13 +3,15 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Card, Avatar, IconButton, Modal, Portal, Divider, Button } from 'react-native-paper'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import axios from 'axios';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 import Logo from '../Logo';
+import { useAppNavigation } from '../utils/useAppNaviagtion';
+
 
 const Dashboard = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useAppNavigation();
   const [selectedAppointment, setSelectedAppointment] = useState<{
     id: string | null;
     name: string | null;
@@ -23,6 +25,7 @@ const Dashboard = () => {
   const [data, setData] = useState({
     success: false,
     data: {
+      name: null,
       appointment: [{
         id: null,
         name: null,
@@ -32,15 +35,38 @@ const Dashboard = () => {
         appointment_time: null,
         status: null,
       }],
+    },
+  });
+
+  const [dataName, setDataName] = useState({
+    success: false,
+    data: {
       name: null,
     }
-  });
+  })
+
+  const fetchNameData = async () => {
+    setRefreshing(true);
+    try{
+      const response = await axios.get('http://192.168.100.40/my_api/profile.php');
+      setDataName(response.data);
+        console.log("API Response Get name:", response.data);
+    }
+    catch (error) {
+      console.log(error);
+    }
+    finally{
+      //setLoading(false);
+      setRefreshing(false);
+
+    }
+  }
 
   const fetchData = async () => {
     //setLoading(true);
     setRefreshing(true);
     try{
-      const response = await axios.get('http://192.168.2.104/my_api/dashboard.php');
+      const response = await axios.get('http://192.168.100.40/my_api/dashboard.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }
@@ -55,11 +81,13 @@ const Dashboard = () => {
   }
   useEffect(() => {
     fetchData();
+    fetchNameData();
   }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchData();
+    fetchNameData();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -74,6 +102,15 @@ const Dashboard = () => {
       surface: '#ff4200',
     },
   };
+
+  const handleOnboard = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    navigation.navigate('Onboarding', {
+      screen: 'RecordDetails',
+      params: { appointment }, 
+    });
+  };
+
 
   return (
     <>
@@ -91,7 +128,7 @@ const Dashboard = () => {
     <View className='px-3 mt-3'>
       <Text className='text-xl font-semibold'>Welcome Back!</Text>
       <Text className='text-xl text-[#ff4200]'> 
-      {data.success && data.data?.name ? data.data.name : 'Loading...'}
+      {dataName.success && dataName.data?.name ? dataName.data.name : 'Loading...'}
       </Text>
     </View>
 
@@ -109,7 +146,9 @@ const Dashboard = () => {
         data.data.appointment.map((app, index) => (
           <>
 
-          <Card key={index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'>
+          <Card key={index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
+          onPress={() => handleOnboard(app)}
+          >
             <Card.Title className='py-2'
               title={app.name + " - " + app.services}
               subtitle={app.branch + " - " + app.appointment_date + " - " + app.appointment_time}

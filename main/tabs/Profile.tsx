@@ -23,7 +23,7 @@ const Profile = () => {
   const handleLogout = async () => {
     setLoading(true);
     try{
-      const logoutResponse = await axios.post('http://192.168.2.104/my_api/logout.php');
+      const logoutResponse = await axios.post('http://192.168.100.40/my_api/logout.php');
       if (logoutResponse.data.success) {
 
         navigation.navigate('Onboarding', {
@@ -53,7 +53,7 @@ const Profile = () => {
 
   const fetchData = async () => {
     try { 
-       const response = await axios.get('http://192.168.2.104/my_api/profile.php');
+       const response = await axios.get('http://192.168.100.40/my_api/profile.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }

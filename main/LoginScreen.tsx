@@ -5,11 +5,13 @@ import Logo from './Logo';
 import axios from 'axios';
 import { useAppNavigation } from './utils/useAppNaviagtion';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -20,7 +22,7 @@ const Login = () => {
     setMessage('');
 
     try {
-        const response = await axios.post('http://192.168.2.104/my_api/login.php', {
+        const response = await axios.post('http://192.168.100.40/my_api/login.php', {
             email,
             password,
         }, { timeout: 5000 });
@@ -29,7 +31,11 @@ const Login = () => {
 
         setMessage(response.data.message);
         if (response.data.success) { // Check for success
+          await AsyncStorage.setItem('Doctors_ID', String(response.data.Doctors_ID));
 
+          if(rememberMe) {
+            await AsyncStorage.setItem('remember_me', String(rememberMe));
+          }
               navigation.navigate('Onboarding', {
                   screen: "Home",
               });
@@ -44,6 +50,22 @@ const Login = () => {
         setLoading(false);
     }
 }
+
+useEffect(() => {
+  const checkRememberMe = async () => {
+      const rememberMeValue = await AsyncStorage.getItem('remember_me');
+      if (rememberMeValue === 'true') {
+          const storedDoctorsId = await AsyncStorage.getItem('Doctors_ID');
+          if (storedDoctorsId) {
+              navigation.navigate('Onboarding', {
+                  screen: 'Home',
+              });
+          }
+      }
+  };
+  checkRememberMe();
+}, []);
+
 
 const showToastWithGravityAndOffset = () => {
   handleLogin();
