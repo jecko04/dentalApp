@@ -87,7 +87,7 @@ const Appointment = () => {
   return (
     <>
     
-    <View className=' bg-[#ff4200] rounded-b-lg max-h-28 h-full flex items-center'>
+    <View className=' bg-[#ff4200] rounded-b-lg max-h-28 h-full flex items-center shadow-2xl shadow-[#000000]'>
       <Text className='text-lg text-white mt-12'>Dental Appointment List</Text>
     </View>
     

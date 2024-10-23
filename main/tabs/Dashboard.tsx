@@ -114,7 +114,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <View className=' bg-[#ff4200] rounded-b-lg max-h-36 h-full flex items-center'>
+    <View className=' bg-[#ff4200] rounded-b-lg max-h-36 h-full flex items-center shadow-2xl shadow-[#000000]'>
       <Text className='text-lg text-white mt-16'>Dashboard</Text>
     </View>
 

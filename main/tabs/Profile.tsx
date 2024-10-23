@@ -75,15 +75,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
       setRefreshing(false);
     }
   }
-  const fetchImageFromStorage = async () => {
-    const storedImage = await AsyncStorage.getItem('avatarImage');
-    if (storedImage) {
-        setImage(storedImage);
-        console.log("Retrieved image from AsyncStorage:", storedImage);
-    }
-};
-
-
+  
 useEffect(() => {
   fetchData();
 
@@ -113,6 +105,12 @@ useEffect(() => {
     })
   }
 
+  const handlePassword = () => {
+    navigation.navigate("Onboarding", {
+      screen: 'ManagePassword',
+    })
+  }
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchData();
@@ -128,7 +126,7 @@ useEffect(() => {
     refreshControl={ 
       <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-          <View className=' bg-[#ff4200] rounded-b-lg max-h-60 h-full flex items-center'>
+          <View className=' bg-[#ff4200] rounded-b-lg max-h-60 h-full flex items-center shadow-2xl shadow-[#000000]'>
             <Text className='text-lg text-white mt-10'>Profile</Text>
             {image ? (
                 <Image source={{ uri: image }} style={{ width: 90, height: 90, borderRadius: 50 }} className='mt-3'/>
@@ -158,6 +156,7 @@ useEffect(() => {
                 />
                 <List.Item title="Change Password" 
                 key="id1"
+                onPress={handlePassword}
                 left={props => <List.Icon {...props} icon="account-lock-outline" />}
                 />
               </List.Accordion>

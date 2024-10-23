@@ -6,6 +6,7 @@ import Login from '../main/LoginScreen';
 import Home from './user/Users';
 import RecordDetails from './tabs/RecordDetails';
 import ManageProfile from './tabs/ManageProfile';
+import ManagePassword from './tabs/ManagePassword';
 
   export type RootStackParamList = {
     Onboarding: NavigatorScreenParams<OnboardingStackParamList>;
@@ -16,6 +17,7 @@ import ManageProfile from './tabs/ManageProfile';
     Home: { image: any };
     RecordDetails: { appointment: any };
     ManageProfile: undefined;
+    ManagePassword: undefined;
   }
   
   const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -32,6 +34,7 @@ import ManageProfile from './tabs/ManageProfile';
             <OnboardingStack.Screen name="Home" component={Home} />
             <OnboardingStack.Screen name="RecordDetails" component={RecordDetails} />
             <OnboardingStack.Screen name="ManageProfile" component={ManageProfile} />
+            <OnboardingStack.Screen name="ManagePassword" component={ManagePassword} />
         </OnboardingStack.Navigator>
     );
   };

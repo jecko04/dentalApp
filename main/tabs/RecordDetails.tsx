@@ -10,7 +10,7 @@ const RecordDetails = ({ route }: { route: any }) => {
 
   return (
     <>
-        <View className=' bg-[#ff4200] rounded-b-lg max-h-20 h-full flex flex-row justify-between items-center pt-5 pr-20'>
+        <View className=' bg-[#ff4200] rounded-b-lg max-h-20 h-full flex flex-row justify-between items-center pt-5 pr-20 shadow-xl shadow-[#FF4200]'>
           <IconButton icon="keyboard-backspace" size={30} iconColor='#FFFFFF' 
           onPress={
             navigation.goBack
@@ -18,7 +18,7 @@ const RecordDetails = ({ route }: { route: any }) => {
           <Text className='text-lg text-white'>Dental Appointment Details</Text>
         </View>
         {appointment ? (
-          <View className='px-6 pt-10 flex flex-col gap-3'>
+          <View className='px-6 py-10 flex flex-col gap-3 shadow-lg shadow-black bg-white mx-4 mt-6 rounded-xl'>
             <Logo/>
           <Text className='text-lg pt-10'>Name: {appointment.name}</Text>
           <Divider bold style={{ 

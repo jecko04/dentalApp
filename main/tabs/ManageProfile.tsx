@@ -153,7 +153,7 @@ const ManageProfile = () => {
               });
 
             ToastAndroid.showWithGravityAndOffset(
-                'Change Profile Picture Successfully!',
+                'Changed Profile Picture Successfully!',
                 ToastAndroid.LONG,
                 ToastAndroid.BOTTOM,
                 25,
