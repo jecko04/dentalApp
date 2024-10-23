@@ -1,15 +1,15 @@
-import { StyleSheet, ToastAndroid, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Image, RefreshControl, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Text, Avatar, List, Divider } from 'react-native-paper'
 import axios from 'axios'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Alert } from 'react-native';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
 
 
-const Profile = () => {
+const Profile = ({ route = useRoute }: { route: any }) => {
 
   const [data, setData] = useState({
     success: false,
@@ -18,13 +18,15 @@ const Profile = () => {
     },
   });
 
-  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useAppNavigation();
 
   const handleLogout = async () => {
-    setLoading(true);
+    setRefreshing(true);
     try {
-      const response = await axios.post('http://192.168.100.40/my_api/logout.php'); // Adjust the URL as needed
+
+      const response = await axios.post('http://192.168.100.40/my_api/logout.php');
       if (response.data.success) {
 
           await AsyncStorage.removeItem('Doctors_ID');
@@ -48,22 +50,47 @@ const Profile = () => {
       console.error("Logout error:", error);
       Alert.alert("Error", "An error occurred. Please try again.");
   }
+  finally {
+    setRefreshing(false);
+  }
   }
 
   const fetchData = async () => {
+    setRefreshing(true);
     try { 
+
+      const storedImage = await AsyncStorage.getItem('avatarImage');
+      if (storedImage) {
+          setImage(storedImage); 
+      }
+
        const response = await axios.get('http://192.168.100.40/my_api/profile.php');
         setData(response.data);
-        console.log("API Response:", response.data);
+        //console.log("API Response:", response.data);
     }
     catch (error) {
       console.error("Error fetching welcome message:", error);
     }
+    finally {
+      setRefreshing(false);
+    }
   }
+  const fetchImageFromStorage = async () => {
+    const storedImage = await AsyncStorage.getItem('avatarImage');
+    if (storedImage) {
+        setImage(storedImage);
+        console.log("Retrieved image from AsyncStorage:", storedImage);
+    }
+};
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+useEffect(() => {
+  fetchData();
+
+  if (route.params?.image) {
+      setImage(route.params.image);
+  }
+}, [route.params?.image]);
 
   const customTheme = {
     ...DefaultTheme,
@@ -86,16 +113,28 @@ const Profile = () => {
     })
   }
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+
   return (
     <>
-
-      {loading? (
-        <ActivityIndicator animating={true} color={MD2Colors.red800} size={'large'} />
-      ) : (
-        <>
+    <ScrollView className=''
+    refreshControl={ 
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
           <View className=' bg-[#ff4200] rounded-b-lg max-h-60 h-full flex items-center'>
             <Text className='text-lg text-white mt-10'>Profile</Text>
-            <Avatar.Icon size={70} icon="account" theme={customTheme} className='mt-7'/>
+            {image ? (
+                <Image source={{ uri: image }} style={{ width: 90, height: 90, borderRadius: 50 }} className='mt-3'/>
+            ) : (
+                <Image source={require('../images/avatar.jpg')} style={{ width: 90, height: 90, borderRadius: 50 }} className='mt-3'/>
+            )}
             <Text className='text-white text-center text-xl mt-4'>
             {data.success && data.data?.name ? data.data.name : 'Loading...'}
             </Text> 
@@ -132,12 +171,10 @@ const Profile = () => {
             >
               Logout
             </Button>
+
           </View>
+          </ScrollView>
       </>
-    
-      )}
-    
-    </>
   )
 }
 

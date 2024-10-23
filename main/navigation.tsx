@@ -13,7 +13,7 @@ import ManageProfile from './tabs/ManageProfile';
 
   export type OnboardingStackParamList = {
     Login: undefined;
-    Home: undefined;
+    Home: { image: any };
     RecordDetails: { appointment: any };
     ManageProfile: undefined;
   }

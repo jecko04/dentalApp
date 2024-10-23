@@ -6,9 +6,12 @@ import axios from 'axios';
 import { useAppNavigation } from './utils/useAppNaviagtion';
 import { ActivityIndicator, MD2Colors, Checkbox  } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute } from '@react-navigation/native';
 
 const Login = () => {
   
+  const route = useRoute();
+  const [image, setImage] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -47,6 +50,7 @@ const Login = () => {
           }
           navigation.navigate('Onboarding', {
               screen: "Home",
+              params: { image },
           });
 
           ToastAndroid.showWithGravityAndOffset(
