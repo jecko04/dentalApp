@@ -41,7 +41,7 @@ const Appointment = () => {
   const fetchData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('http://192.168.100.40/my_api/appointment.php');
+      const response = await axios.get('https://8e76-136-158-2-4.ngrok-free.app/my_api/appointment.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }

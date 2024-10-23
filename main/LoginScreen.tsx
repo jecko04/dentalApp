@@ -26,17 +26,17 @@ const Login = () => {
     setMessage('');
 
     try {
-        const response = await axios.post('http://192.168.100.40/my_api/login.php', {
+        const response = await axios.post('https://8e76-136-158-2-4.ngrok-free.app/my_api/login.php', {
           email: storedEmail || email,
           password: storedPassword || password,
-            remember_me: rememberMe,
-        }, { timeout: 5000 });
+          remember_me: rememberMe,
+        }, { timeout: 10000 });
 
         console.log("API Response:", response.data); 
         console.log("is Click:" , rememberMe);
 
         setMessage(response.data.message);
-        if (response.data.success) { // Check for success
+        if (response.data.success) { 
           await AsyncStorage.setItem('Doctors_ID', String(response.data.Doctors_ID));
           
           if(rememberMe) {
@@ -45,8 +45,8 @@ const Login = () => {
             await AsyncStorage.setItem('password', password);
           }else {
             await AsyncStorage.removeItem('remember_me');
-            await AsyncStorage.removeItem('Email');
-            await AsyncStorage.removeItem('Password');
+            await AsyncStorage.removeItem('email');
+            await AsyncStorage.removeItem('password');
           }
           navigation.navigate('Onboarding', {
               screen: "Home",
@@ -62,12 +62,14 @@ const Login = () => {
           );
         } else {
             Alert.alert("Login failed", response.data.message);
+            console.log("REQUEST FFAILED:", response.data);
         }
     } catch (error) {
-        console.error("Login error:", error);
-        setMessage("An error occurred. Please try again.");
-        Alert.alert("Error", "An error occurred. Please try again.");
-    } finally {
+      console.log(error);
+      setMessage("An error occurred. Please try again.");
+      Alert.alert("Error", "An error occurred. Please try again.");
+    }
+    finally {
         setLoading(false);
     }
 }
@@ -81,7 +83,9 @@ useEffect(() => {
       const storedPassword = await AsyncStorage.getItem('password');
       if (storedDoctorsId) {
         if (storedDoctorsId) {
-          handleLogin(storedEmail, storedPassword); 
+          if (storedEmail && storedPassword) {
+            handleLogin(storedEmail, storedPassword); 
+        }
       }
       }
     }
@@ -94,10 +98,11 @@ useEffect(() => {
     <>
       {loading ? (
         
-        <ActivityIndicator animating={true} color={MD2Colors.red800} size={'large'} />
+        <ActivityIndicator animating={true} color={MD2Colors.red800} size={'large'} 
+        className='my-96' />
       ) : (
         <>
-        <View className='flex flex-col justify-center items-center px-3 mt-36'>
+        <View className='flex flex-col justify-center items-center px-3 mt-60'>
         <Logo/>
 
         <View className='flex flex-col w-full'>
