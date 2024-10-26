@@ -48,7 +48,7 @@ const Dashboard = () => {
   const fetchNameData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('https://8e76-136-158-2-4.ngrok-free.app/my_api/profile.php');
+      const response = await axios.get('https://9e48-136-158-2-4.ngrok-free.app/my_api/profile.php');
       setDataName(response.data);
         console.log("API Response Get name:", response.data);
     }
@@ -66,7 +66,7 @@ const Dashboard = () => {
     //setLoading(true);
     setRefreshing(true);
     try{
-      const response = await axios.get('https://8e76-136-158-2-4.ngrok-free.app/my_api/dashboard.php');
+      const response = await axios.get('https://9e48-136-158-2-4.ngrok-free.app/my_api/dashboard.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }

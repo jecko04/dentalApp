@@ -26,7 +26,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
     setRefreshing(true);
     try {
 
-      const response = await axios.post('https://8e76-136-158-2-4.ngrok-free.app/my_api/logout.php');
+      const response = await axios.post('https://9e48-136-158-2-4.ngrok-free.app/my_api/logout.php');
       if (response.data.success) {
 
           await AsyncStorage.removeItem('Doctors_ID');
@@ -64,7 +64,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
           setImage(storedImage); 
       }
 
-       const response = await axios.get('https://8e76-136-158-2-4.ngrok-free.app/my_api/profile.php');
+       const response = await axios.get('https://9e48-136-158-2-4.ngrok-free.app/my_api/profile.php');
         setData(response.data);
         //console.log("API Response:", response.data);
     }
