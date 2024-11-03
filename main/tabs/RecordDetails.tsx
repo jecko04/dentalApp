@@ -8,6 +8,21 @@ const RecordDetails = ({ route }: { route: any }) => {
   const {appointment} = route.params; 
   const navigation = useAppNavigation();
 
+  const formatTime = (time: any) => {
+    const [hours, minutes] = time.split(':');
+    let hours12 = parseInt(hours, 10);
+    const suffix = hours12 >= 12 ? 'PM' : 'AM';
+
+    hours12 = hours12 % 12 || 12;
+
+    return `${hours12}:${minutes} ${suffix}`;
+  }
+
+  const appointmentTime12hr = formatTime(appointment.appointment_time);
+  const rescheduleTime12hr = appointment.reschedule_time 
+  ? formatTime(appointment.reschedule_time) 
+  : 'No Reschedule time';
+
   return (
     <>
         <View className=' bg-[#ff4200] rounded-b-lg max-h-20 h-full flex flex-row justify-between items-center pt-5 pr-20 shadow-xl shadow-[#FF4200]'>
@@ -44,19 +59,19 @@ const RecordDetails = ({ route }: { route: any }) => {
             marginHorizontal: 11, 
             backgroundColor: '#ff4200'  
           }} />
-          <Text className='text-lg'>Appointment Time: {appointment.appointment_time}</Text>
+          <Text className='text-lg'>Appointment Time: {appointmentTime12hr}</Text>
           <Divider bold style={{ 
             marginTop: 28, 
             marginHorizontal: 11, 
             backgroundColor: '#ff4200'  
           }} />
-          <Text className='text-lg'>Reschedule Date: {appointment.reschedule_date}</Text>
+          <Text className='text-lg'>Reschedule Date: {appointment.reschedule_date ? appointment.reschedule_date : "No Reschedule Date"}</Text>
           <Divider bold style={{ 
             marginTop: 28, 
             marginHorizontal: 11, 
             backgroundColor: '#ff4200'  
           }} />
-          <Text className='text-lg'>Reschedule Time: {appointment.reschedule_time}</Text>
+          <Text className='text-lg'>Reschedule Time: {rescheduleTime12hr}</Text>
           <Divider bold style={{ 
             marginTop: 28, 
             marginHorizontal: 11, 

@@ -48,7 +48,7 @@ const Dashboard = () => {
   const fetchNameData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('https://9e48-136-158-2-4.ngrok-free.app/my_api/profile.php');
+      const response = await axios.get('https://2738-136-158-2-21.ngrok-free.app/my_api/profile.php');
       setDataName(response.data);
         console.log("API Response Get name:", response.data);
     }
@@ -66,7 +66,7 @@ const Dashboard = () => {
     //setLoading(true);
     setRefreshing(true);
     try{
-      const response = await axios.get('https://9e48-136-158-2-4.ngrok-free.app/my_api/dashboard.php');
+      const response = await axios.get('https://2738-136-158-2-21.ngrok-free.app/my_api/dashboard.php');
         setData(response.data);
         console.log("API Response:", response.data);
     }
@@ -111,6 +111,15 @@ const Dashboard = () => {
     });
   };
 
+  const formatTime = (time: any) => {
+    const [hours, minutes] = time.split(':');
+    let hours12 = parseInt(hours, 10);
+    const suffix = hours12 >= 12 ? 'PM' : 'AM';
+
+    hours12 = hours12 % 12 || 12;
+
+    return `${hours12}:${minutes} ${suffix}`;
+  }
 
   return (
     <>
@@ -151,7 +160,7 @@ const Dashboard = () => {
           >
             <Card.Title className='py-2'
               title={app.name + " - " + app.services}
-              subtitle={app.branch + " - " + app.appointment_date + " - " + app.appointment_time}
+              subtitle={app.branch + " - " + app.appointment_date + " - " + formatTime(app.appointment_time)}
               left={(props) => <Avatar.Icon {...props} icon="calendar" theme={customTheme} size={50}
               style={styles.card}
               />}
