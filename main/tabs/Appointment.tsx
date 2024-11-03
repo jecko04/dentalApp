@@ -111,8 +111,7 @@ const Appointment = () => {
       ) : (
       data.success && data.data.appointment.length > 0 ? (
         data.data.appointment.map((app, index) => (
-          <>
-          <Card key={index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
+          <Card key={app.id || index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
           onPress={() => handleOnboard(app)}>
             <Card.Title className='py-2'
               title={app.name + " - " + app.services}
@@ -122,7 +121,6 @@ const Appointment = () => {
               />}
             />
           </Card>
-          </>
         ))
       ) : (
         <View className='flex flex-col gap-4 items-center mt-3'>
