@@ -37,7 +37,7 @@ const ManageProfile = () => {
     const fetchData = async () => {
         setRefreshing(true);
         try{
-            const response = await axios.get('https://2738-136-158-2-21.ngrok-free.app/my_api/profile.php');
+            const response = await axios.get('https://b7fa-110-54-149-142.ngrok-free.app/my_api/profile.php');
             setData(response.data);
             //console.log("API Response:", response.data);
         }
@@ -68,7 +68,7 @@ const ManageProfile = () => {
         }
     
         try {
-            const responseUpdate = await axios.post('http://192.168.0.107/my_api/setProfile.php', {
+            const responseUpdate = await axios.post('https://b7fa-110-54-149-142.ngrok-free.app/my_api/setProfile.php', {
                 name: update.updateName,
                 email: update.updateEmail,
             });

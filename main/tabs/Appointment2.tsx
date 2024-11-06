@@ -50,9 +50,14 @@ const Appointment2 = () => {
   const fetchData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('https://2738-136-158-2-21.ngrok-free.app/my_api/appointment2.php');
+      const response = await axios.get('https://4f3f-136-158-2-21.ngrok-free.app/api/mobile/appointment2');
+      if (response.data.success) {
         setData(response.data);
-        console.log("API Response:", response.data);
+      } else {
+        console.log("API Response indicates failure:", response.data);
+      }
+      
+      console.log("API Response:", response.data);
     }
     catch (error) {
       console.log(error);

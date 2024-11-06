@@ -21,19 +21,20 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const navigation = useAppNavigation();
 
+  
   const handleLogin = async (storedEmail: any, storedPassword: any) => {
     setLoading(true);
     setMessage('');
-
+    
     try {
-        const response = await axios.post('https://2738-136-158-2-21.ngrok-free.app/my_api/login.php', {
+
+        const response = await axios.post('https://4f3f-136-158-2-21.ngrok-free.app/api/mobile/login', {
           email: storedEmail || email,
           password: storedPassword || password,
           remember_me: rememberMe,
-        }, { timeout: 10000 });
+        })
 
         console.log("API Response:", response.data); 
-        console.log("is Click:" , rememberMe);
 
         setMessage(response.data.message);
         if (response.data.success) { 
