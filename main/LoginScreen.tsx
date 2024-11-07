@@ -28,16 +28,28 @@ const Login = () => {
     
     try {
 
-        const response = await axios.post('https://4f3f-136-158-2-21.ngrok-free.app/api/mobile/login', {
+
+        const response = await axios.post('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/login', {
           email: storedEmail || email,
           password: storedPassword || password,
           remember_me: rememberMe,
-        })
+        });
 
         console.log("API Response:", response.data); 
 
         setMessage(response.data.message);
-        if (response.data.success) { 
+        if (response.data.success) {
+          const { token, userId } = response.data;
+
+          const usersTokens = await AsyncStorage.getItem('usersTokens');
+          const parsedTokens = usersTokens ? JSON.parse(usersTokens) : {};  
+
+          if (!parsedTokens[userId]) {
+            parsedTokens[userId] = token;
+            await AsyncStorage.setItem('usersTokens', JSON.stringify(parsedTokens));
+          }
+          await AsyncStorage.setItem('token', token);
+
           await AsyncStorage.setItem('Doctors_ID', String(response.data.Doctors_ID));
           
           if(rememberMe) {

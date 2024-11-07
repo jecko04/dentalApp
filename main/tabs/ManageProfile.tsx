@@ -15,6 +15,7 @@ const ManageProfile = () => {
         updateName: "",
         updateEmail: "",
     });
+
     const [edit, setEdit] = useState(false);
     const showModal = () => setVisible(true);
     const hideModal = () => setVisible(false);
@@ -31,13 +32,30 @@ const ManageProfile = () => {
         name2: null,
         email: null,
         password: null,
+        setProfile: [{
+            Name: null,
+            Email: null,
+        }]
         },
     });
 
     const fetchData = async () => {
         setRefreshing(true);
         try{
-            const response = await axios.get('https://b7fa-110-54-149-142.ngrok-free.app/my_api/profile.php');
+
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+              console.log("Token not found.");
+              setRefreshing(false);
+              return;
+            }
+
+            const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/getProfile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                  },
+                  withCredentials: true,
+            });
             setData(response.data);
             //console.log("API Response:", response.data);
         }
@@ -51,7 +69,6 @@ const ManageProfile = () => {
 
     const handleUpdate = async () => {
         if (!update.updateName) {
-            // Show toast if name is empty
             ToastAndroid.show("Name cannot be empty", ToastAndroid.SHORT);
             return;
         }
@@ -68,14 +85,29 @@ const ManageProfile = () => {
         }
     
         try {
-            const responseUpdate = await axios.post('https://b7fa-110-54-149-142.ngrok-free.app/my_api/setProfile.php', {
+
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+              console.log("Token not found.");
+              setRefreshing(false);
+              return;
+            }
+
+            const responseUpdate = await axios.post('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/setProfile', {
                 name: update.updateName,
                 email: update.updateEmail,
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                withCredentials: true,
             });
             setData(responseUpdate.data);
             console.log("API ResponseUpdate:", responseUpdate.data);
         } catch (error) {
             console.log(error)
+        } finally {
+            setRefreshing(false); 
         }
     }
 
@@ -227,10 +259,10 @@ const ManageProfile = () => {
     
         <Button className='items-end -bottom-28 pr-6 rounded-sm' textColor='gray' onPress={handleEdit}>Edit</Button>
         <View className='flex flex-col gap-2 items-center px-10 pt-5 mt-20'>  
-            <TextInput
+        <TextInput
             mode="flat"
             label="Fullname"
-            value={edit ? update.updateName : data.success && data.data?.name2 ? data.data.name2 : 'Loading...'}
+            value={edit ? update.updateName : (data.success && data.data?.setProfile[0]?.Name ? data.data.setProfile[0].Name : 'Loading...')}
             onChangeText={Text => setUpdate({...update, updateName: Text})}
             placeholder="Fullname"
             className='w-full bg-transparent'
@@ -238,19 +270,19 @@ const ManageProfile = () => {
             disabled={!edit}
             left={<TextInput.Icon icon="account" />}
             underlineColor='#FF4200'
-            />
-            <TextInput
-            mode= "flat"
+        />
+        <TextInput
+            mode="flat"
             label="Email"
-            value={edit ? update.updateEmail : data.success && data.data?.email ? data.data.email : 'Loading...'}
-            onChangeText={Text => setUpdate({...update, updateEmail : Text})}
+            value={edit ? update.updateEmail : (data.success && data.data?.setProfile[0]?.Email ? data.data.setProfile[0].Email : 'Loading...')}
+            onChangeText={Text => setUpdate({...update, updateEmail: Text})}
             placeholder="Email"
             className='w-full bg-transparent'
             textColor='#000000'
             disabled={!edit}
             left={<TextInput.Icon icon="email" />}
             underlineColor='#FF4200'
-            />
+        />
         </View>
 
         {edit && (

@@ -4,6 +4,7 @@ import { Card, Avatar, IconButton, Modal, Portal, Divider, Button } from 'react-
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Appointment = () => {
 
@@ -41,8 +42,19 @@ const Appointment = () => {
   const fetchData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('https://4f3f-136-158-2-21.ngrok-free.app/api/mobile/appointment', {
-        withCredentials: true
+      const token = await AsyncStorage.getItem('token');
+      console.log("Token from AsyncStorage:", token); 
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+      const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/appointment', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
       });
       if (response.data.success) {
         setData(response.data);

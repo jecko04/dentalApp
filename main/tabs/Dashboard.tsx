@@ -5,6 +5,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import axios from 'axios';
 import Logo from '../Logo';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Dashboard = () => {
@@ -48,7 +49,19 @@ const Dashboard = () => {
   const fetchNameData = async () => {
     setRefreshing(true);
     try{
-      const response = await axios.get('https://b7fa-110-54-149-142.ngrok-free.app/my_api/profile.php');
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+      const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+      });
       setDataName(response.data);
         console.log("API Response Get name:", response.data);
     }
@@ -66,7 +79,20 @@ const Dashboard = () => {
     //setLoading(true);
     setRefreshing(true);
     try{
-      const response = await axios.get('https://b7fa-110-54-149-142.ngrok-free.app/my_api/dashboard.php');
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+
+      const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+      });
         setData(response.data);
         console.log("API Response:", response.data);
     }

@@ -25,10 +25,24 @@ const Profile = ({ route = useRoute }: { route: any }) => {
   const handleLogout = async () => {
     setRefreshing(true);
     try {
+      const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.log("Token not found.");
+      setRefreshing(false);
+      return;
+    }
 
-      const response = await axios.post('https://b7fa-110-54-149-142.ngrok-free.app/my_api/logout.php');
+      const response = await axios.post('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/logout',
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          withCredentials: true,  
+        }
+      );
       if (response.data.success) {
-
+          await AsyncStorage.removeItem('token');
           await AsyncStorage.removeItem('Doctors_ID');
           await AsyncStorage.removeItem('remember_me');
 
@@ -64,9 +78,20 @@ const Profile = ({ route = useRoute }: { route: any }) => {
           setImage(storedImage); 
       }
 
-       const response = await axios.get('https://b7fa-110-54-149-142.ngrok-free.app/my_api/profile.php');
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+       const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+       });
         setData(response.data);
-        //console.log("API Response:", response.data);
     }
     catch (error) {
       console.error("Error fetching welcome message:", error);
