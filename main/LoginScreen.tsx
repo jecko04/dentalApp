@@ -79,8 +79,13 @@ const Login = () => {
         }
     } catch (error) {
       console.log(error);
-      setMessage("An error occurred. Please try again.");
-      Alert.alert("Error", "An error occurred. Please try again.");
+      ToastAndroid.showWithGravityAndOffset(
+        'Account Login Failed, Try Again!',
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
     }
     finally {
         setLoading(false);

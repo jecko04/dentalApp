@@ -181,7 +181,7 @@ const Dashboard = () => {
         data.data.appointment.map((app, index) => (
           <>
 
-          <Card key={index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
+          <Card key={app.id || index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
           onPress={() => handleOnboard(app)}
           >
             <Card.Title className='py-2'

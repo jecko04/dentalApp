@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Avatar, Button, HelperText, IconButton, TextInput } from 'react-native-paper';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ManagePassword = () => {
     const [refreshing, setRefreshing] = useState(false);
@@ -10,7 +11,7 @@ const ManagePassword = () => {
     
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [newPassword_confirmation, setNewPassword_confirmation] = useState('');
 
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
@@ -23,7 +24,7 @@ const ManagePassword = () => {
         }, 2000);
     }, []);
 
-    const passwordsMatch = () => newPassword === confirmPassword;
+    const passwordsMatch = () => newPassword === newPassword_confirmation;
 
     const isPasswordValid = (password: string) => {
         const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -55,10 +56,23 @@ const ManagePassword = () => {
         }
 
         try {
-            const response = await axios.post('https://b7fa-110-54-149-142.ngrok-free.app/my_api/changePassword.php', {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+              console.log("Token not found.");
+              setRefreshing(false);
+              return;
+            }
+
+            const response = await axios.post('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/change', {
                 currentPassword,
                 newPassword,
-                confirmPassword
+                newPassword_confirmation,   
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                withCredentials: true,
             });
             console.log("API Response:", response.data)
             if (response.data.success) {
@@ -71,10 +85,25 @@ const ManagePassword = () => {
                 );
 
                 navigation.goBack();
+            } else {
+                ToastAndroid.showWithGravityAndOffset(
+                    'Changed Password Failed!',
+                    ToastAndroid.LONG,
+                    ToastAndroid.BOTTOM,
+                    25,
+                    50,
+                );
             }
         }
         catch (error) {
             console.log(error);
+            ToastAndroid.showWithGravityAndOffset(
+                'Changed Password Failed!',
+                ToastAndroid.LONG,
+                ToastAndroid.BOTTOM,
+                25,
+                50,
+            );
         }
         finally {
         setRefreshing(false);
@@ -140,8 +169,8 @@ const ManagePassword = () => {
                 <TextInput
                     mode="flat"
                     label="Confirm Password"
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
+                    value={newPassword_confirmation}
+                    onChangeText={setNewPassword_confirmation}
                     placeholder="Confirm Password"
                     className='w-full bg-transparent'
                     secureTextEntry={!showConfirm}
