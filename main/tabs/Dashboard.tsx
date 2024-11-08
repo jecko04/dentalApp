@@ -56,7 +56,7 @@ const Dashboard = () => {
         return;
       }
 
-      const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+      const response = await axios.get('https://6857-110-54-150-100.ngrok-free.app/api/mobile/name', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 
@@ -87,7 +87,7 @@ const Dashboard = () => {
       }
 
 
-      const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+      const response = await axios.get('https://6857-110-54-150-100.ngrok-free.app/api/mobile/dashboard', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 
@@ -179,8 +179,6 @@ const Dashboard = () => {
       ) : (
       data.success && data.data.appointment.length > 0 ? (
         data.data.appointment.map((app, index) => (
-          <>
-
           <Card key={app.id || index} className='rounded-br-lg rounded-tr-none rounded-bl-none rounded-tl-lg m-1 bg-white'
           onPress={() => handleOnboard(app)}
           >
@@ -192,8 +190,6 @@ const Dashboard = () => {
               />}
             />
           </Card>
-
-          </>
         ))
       ) : (
         <Text className='text-center flex items-center'>No Appointment for today!</Text>

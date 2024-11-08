@@ -32,7 +32,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
       return;
     }
 
-      const response = await axios.post('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/logout',
+      const response = await axios.post('https://6857-110-54-150-100.ngrok-free.app/api/mobile/logout',
         {},
         {
           headers: {
@@ -69,6 +69,38 @@ const Profile = ({ route = useRoute }: { route: any }) => {
   }
   }
 
+  const fetchName = async () => {
+    setRefreshing(true);
+    try { 
+
+      const storedImage = await AsyncStorage.getItem('avatarImage');
+      if (storedImage) {
+          setImage(storedImage); 
+      }
+
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+       const response = await axios.get('https://6857-110-54-150-100.ngrok-free.app/api/mobile/name', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+       });
+        setData(response.data);
+    }
+    catch (error) {
+      console.error("Error fetching welcome message:", error);
+    }
+    finally {
+      setRefreshing(false);
+    }
+  }
+
   const fetchData = async () => {
     setRefreshing(true);
     try { 
@@ -85,7 +117,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
         return;
       }
 
-       const response = await axios.get('https://8c21-136-158-2-21.ngrok-free.app/api/mobile/dashboard', {
+       const response = await axios.get('https://6857-110-54-150-100.ngrok-free.app/api/mobile/dashboard', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 
@@ -103,6 +135,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
   
 useEffect(() => {
   fetchData();
+  fetchName();
 
   if (route.params?.image) {
       setImage(route.params.image);
