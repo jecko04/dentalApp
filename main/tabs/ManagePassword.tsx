@@ -63,7 +63,7 @@ const ManagePassword = () => {
               return;
             }
 
-            const response = await axios.post('https://6857-110-54-150-100.ngrok-free.app/api/mobile/change', {
+            const response = await axios.post('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/change', {
                 currentPassword,
                 newPassword,
                 newPassword_confirmation,   
