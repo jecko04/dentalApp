@@ -39,14 +39,45 @@ const Appointment2 = () => {
     status: string | null;
   } | null>(null);
 
-  // const [selectedBranch, setSelectedBranch] = useState(null);
+  const [dentalDetails, setDentalDetails] = useState({
+    success: false,
+    data: {
+      patients: [],
+      medical_history: [],
+      dental_history: [],
+    }
+  });
 
-  // useEffect(() => {
-  //   if (data.data.appointment.length >= 2) {
-  //     const SecondBranch = data.data.appointment ? data.data.appointment[1].branch : null;
-  //     setSelectedBranch(SecondBranch);
-  //   }
-  // }, [data]);
+  const fetchDentalDetails = async (page = 1) => {
+    setRefreshing(true);
+    try{
+      const token = await AsyncStorage.getItem('token');
+      console.log("Token from AsyncStorage:", token); 
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/dentaldetails', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+      });
+      if (response.data.success) {
+        setDentalDetails(response.data);
+      } else {
+        console.log("API Response indicates failure:", response.data);
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+    finally{
+      setRefreshing(false);
+    }
+  }
 
   const fetchData = async () => {
     setRefreshing(true);
@@ -82,6 +113,7 @@ const Appointment2 = () => {
 
   useEffect(() => {
     fetchData();
+    fetchDentalDetails();
   }, []);
 
 
@@ -103,11 +135,13 @@ const Appointment2 = () => {
     }, 2000);
   }, []);
 
+  
+
   const handleOnboard = (appointment: any) => {
     setSelectedAppointment(appointment);
     navigation.navigate('Onboarding', {
       screen: 'RecordDetails',
-      params: { appointment }, 
+      params: { appointment, dentalDetails }, 
     });
   };
 

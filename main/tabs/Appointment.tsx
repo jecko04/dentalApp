@@ -25,27 +25,7 @@ const Appointment = () => {
     }
   });
 
-  const [notes, setNotes] = useState({
-    success: false,
-    data: {
-      notes: [{
-        id: null,
-        user_id: null,
-        email: null,
-        notes: null,
-        created_at: null,
-        updated_at: null,
-      }],
-      reschedule_reasons: [{
-        id: null,
-        appointment_id: null,
-        user_id: null,
-        reason: null,
-        created_at: null,
-        updated_at: null,
-      }],
-    }
-  });
+  
 
   const [dentalDetails, setDentalDetails] = useState({
     success: false,
@@ -102,39 +82,6 @@ const Appointment = () => {
     }
   }
 
-  const fetchNotes = async () => {
-    setRefreshing(true);
-    try{
-      const token = await AsyncStorage.getItem('token');
-      console.log("Token from AsyncStorage:", token); 
-      if (!token) {
-        console.log("Token not found.");
-        setRefreshing(false);
-        return;
-      }
-
-      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/notes', {
-        withCredentials: true,
-        headers: {
-          'Authorization': `Bearer ${token}` 
-        }
-      });
-      if (response.data.success) {
-        setNotes(response.data);
-      } else {
-        console.log("API Response indicates failure:", response.data);
-      }
-      
-      console.log("API Response:", response.data);
-    }
-    catch (error) {
-      console.log(error);
-    }
-    finally{
-      setRefreshing(false);
-    }
-  }
-
   const fetchData = async () => {
     setRefreshing(true);
     try{
@@ -170,7 +117,7 @@ const Appointment = () => {
 
   useEffect(() => {
     fetchData();
-    fetchNotes();
+    //fetchNotes();
     fetchDentalDetails();
   }, []);
 
@@ -198,7 +145,7 @@ const Appointment = () => {
 
     navigation.navigate('Onboarding', {
       screen: 'RecordDetails',
-      params: { appointment, notes, dentalDetails }, 
+      params: { appointment, dentalDetails }, 
     });
   };
 

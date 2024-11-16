@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { IconButton, Divider, Card, Button, PaperProvider, Portal, Modal  } from 'react-native-paper';
+import { StyleSheet, Text, View, ScrollView, ToastAndroid, RefreshControl } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { IconButton, Divider, Card, Button, PaperProvider, Portal, Modal, TextInput  } from 'react-native-paper';
 import { useAppNavigation } from '../utils/useAppNaviagtion';
 import Logo from '../Logo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const RecordDetails = ({ route }: { route: any }) => {
-  const {appointment, notes, dentalDetails} = route.params; 
+  const {appointment, dentalDetails} = route.params; 
   const navigation = useAppNavigation();
 
   const formatTime = (time: any) => {
@@ -29,6 +31,65 @@ const RecordDetails = ({ route }: { route: any }) => {
   const [filteredRecord2, setFilteredRecord2] = useState<any[]>([]);
   const [filteredRecord3, setFilteredRecord3] = useState<any[]>([]);
 
+  const [notes, setNotes] = useState({
+    success: false,
+    data: {
+      notes: [{
+        id: null,
+        user_id: null,
+        email: null,
+        notes: null,
+        created_at: null,
+        updated_at: null,
+      }],
+      reschedule_reasons: [{
+        id: null,
+        appointment_id: null,
+        user_id: null,
+        reason: null,
+        created_at: null,
+        updated_at: null,
+      }],
+    }
+  });
+
+  const fetchNotes = async () => {
+    setRefreshing(true);
+    try{
+      const token = await AsyncStorage.getItem('token');
+      console.log("Token from AsyncStorage:", token); 
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+
+      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/notes', {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+      });
+      if (response.data.success) {
+        setNotes(response.data);
+      } else {
+        console.log("API Response indicates failure:", response.data);
+      }
+      
+      console.log("API Response:", response.data);
+    }
+    catch (error) {
+      console.log(error);
+    }
+    finally{
+      setRefreshing(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
   useEffect(() => {
     if (notes) {
 
@@ -42,13 +103,11 @@ const RecordDetails = ({ route }: { route: any }) => {
 
       setFilteredNotes(userNotes || []);
       setFilteredReasons(userReasons || []);
-      console.log('match');
     }
   }, [notes, appointment]);
 
   useEffect(() => {
     if (dentalDetails) {
-      // Filter dentalDetails based on appointment.user_id
       const filteredPersonal = dentalDetails.data?.patients.filter((patient: any) => patient.user_id === appointment.user_id);
       setFilteredRecord(filteredPersonal || []);
 
@@ -57,7 +116,6 @@ const RecordDetails = ({ route }: { route: any }) => {
           filteredPersonal.some((patient: any) => patient.id === medical.patient_id)
         );
         setFilteredRecord2(filteredMedical || []);
-        console.log(filteredMedical); 
       }
 
       if (filteredPersonal && filteredPersonal.length > 0) {
@@ -65,7 +123,6 @@ const RecordDetails = ({ route }: { route: any }) => {
           filteredPersonal.some((patient: any) => patient.id === dental.patient_id)
         );
         setFilteredRecord3(filteredDental || []);
-        console.log(filteredDental); 
       }
     }
     
@@ -88,11 +145,102 @@ const RecordDetails = ({ route }: { route: any }) => {
   const showModal3 = () => setVisible3(true);
   const hideModal3 = () => setVisible3(false);
 
+
+  const [editingNoteId, setEditingNoteId] = useState(null); 
+  const [tempNote, setTempNote] = useState(''); 
+
+  const handleEdit = (note: any) => {
+    setEditingNoteId(note.id);
+    setTempNote(note.notes);
+    setUpdate((prev) => ({ ...prev, user_id: note.user_id })); 
+  };
+  
+  const handleSave = async (note: any) => {
+    if (!tempNote.trim()) {
+      ToastAndroid.showWithGravityAndOffset(
+        'Note cannot be empty.',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+      return;
+    }
+  
+    setLoading(true);  // Set loading state while saving
+  
+    try {
+      const token = await AsyncStorage.getItem('token');
+      console.log("Token from AsyncStorage:", token); 
+      if (!token) {
+        console.log("Token not found.");
+        setRefreshing(false);
+        return;
+      }
+  
+      const response = await axios.post('https://099c-136-158-2-237.ngrok-free.app/api/mobile/editnotes', {
+        notes: tempNote, 
+        user_id: note.user_id,
+      }, {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      if (response.data.success) {
+        ToastAndroid.showWithGravityAndOffset(
+          'Note saved successfully!',
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
+        setEditingNoteId(null); 
+        setTempNote(''); 
+      } else {
+        console.log("API Response indicates failure:", response.data);
+      }
+      console.log("API Response:", response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingNoteId(null); 
+    setTempNote('');
+  };
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [update, setUpdate] = useState<{
+    notes: string;
+    user_id: any;
+  }>({
+    notes: "",
+    user_id: null,
+  });
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchNotes(); 
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
     <>
     <PaperProvider>
-    <ScrollView>
-
+    <ScrollView
+    refreshControl={ 
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      
         <View className=' bg-[#ff4200] rounded-b-lg max-h-20 h-full flex flex-row justify-between items-center pt-5 pr-20 shadow-xl shadow-[#FF4200]'>
           <IconButton icon="keyboard-backspace" size={30} iconColor='#FFFFFF' 
           onPress={
@@ -100,6 +248,12 @@ const RecordDetails = ({ route }: { route: any }) => {
           }/>
           <Text className='text-lg text-white'>Dental Appointment Details</Text>
         </View>
+
+        {refreshing ? (
+        <>
+        </>
+      ) : (
+        <>
         {appointment ? (
           <View className='px-6 py-10 flex flex-col gap-3 shadow-lg bg-white mx-4 mt-6 rounded-xl'>
             <Logo/>
@@ -399,17 +553,34 @@ const RecordDetails = ({ route }: { route: any }) => {
       )}
 
 
-          
-      
-
         {/* Notes */}
         {filteredNotes.length > 0 ? (
           filteredNotes.map((note, index) => (
           <Card className='bg-yellow-300 mt-4 mx-4 w-[1rem] p-2' key={index}>
+            <Card.Actions>
+            {editingNoteId === note.id ? (
+                <>
+                  <Button onPress={() => handleSave(note)} disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+                  <Button onPress={handleCancel} disabled={loading}>Cancel</Button>
+                </>
+              ) : (
+                <Text className="text-sm text-gray-500" onPress={() => handleEdit(note)}>
+                  Edit
+                </Text>
+              )}
+            </Card.Actions>
             <Card.Content>
               <Text className='font-semibold text-lg italic'>Added note!</Text>
               <Text className='font-semibold border-t mt-3 pt-2 text-center text-sm text-gray-500'>Created At: {new Date(note.updated_at).toISOString().split('T')[0]}</Text>
-              <Text className='text-lg pt-3'>{note.notes || "No notes available"}</Text>
+              {editingNoteId === note.id ? (
+                <TextInput
+                  value={tempNote}
+                  onChangeText={(text) => setTempNote(text)} 
+                  className="bg-yellow-300 p-2"
+                />
+              ) : (
+                <Text className="text-lg pt-3">{note.notes || 'No notes available'}</Text>
+              )}
             </Card.Content>
           </Card>
           ))
@@ -434,6 +605,9 @@ const RecordDetails = ({ route }: { route: any }) => {
           
           </>
         )}
+        </>
+      )}
+        
       
     </ScrollView>
     </PaperProvider>

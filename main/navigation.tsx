@@ -15,7 +15,7 @@ import ManagePassword from './tabs/ManagePassword';
   export type OnboardingStackParamList = {
     Login: undefined;
     Home: { image: any };
-    RecordDetails: { appointment: any, notes: any, dentalDetails: any };
+    RecordDetails: { appointment: any, dentalDetails: any };
     ManageProfile: undefined;
     ManagePassword: undefined;
   }
