@@ -56,7 +56,7 @@ const Dashboard = () => {
         return;
       }
 
-      const response = await axios.get('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/name', {
+      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/name', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 
@@ -87,7 +87,7 @@ const Dashboard = () => {
       }
 
 
-      const response = await axios.get('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/dashboard', {
+      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/dashboard', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 

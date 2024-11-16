@@ -58,7 +58,7 @@ const Appointment2 = () => {
         return;
       }
 
-      const response = await axios.get('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/appointment2', {
+      const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/appointment2', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 

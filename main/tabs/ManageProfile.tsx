@@ -106,7 +106,7 @@ const ManageProfile = () => {
               return;
             }
 
-            const response = await axios.get('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/getProfile', {
+            const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/getProfile', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                   },
@@ -157,7 +157,7 @@ const ManageProfile = () => {
               return;
             }
 
-            const responseUpdate = await axios.post('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/setProfile', {
+            const responseUpdate = await axios.post('https://099c-136-158-2-237.ngrok-free.app/api/mobile/setProfile', {
                 name: update.updateName,
                 email: update.updateEmail,
                 birth_date: formattedDOB,

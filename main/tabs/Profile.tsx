@@ -32,7 +32,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
       return;
     }
 
-      const response = await axios.post('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/logout',
+      const response = await axios.post('https://099c-136-158-2-237.ngrok-free.app/api/mobile/logout',
         {},
         {
           headers: {
@@ -85,7 +85,7 @@ const Profile = ({ route = useRoute }: { route: any }) => {
         return;
       }
 
-       const response = await axios.get('https://37cc-136-158-2-237.ngrok-free.app/api/mobile/name', {
+       const response = await axios.get('https://099c-136-158-2-237.ngrok-free.app/api/mobile/name', {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${token}` 
